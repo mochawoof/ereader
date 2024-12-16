@@ -9,6 +9,7 @@ class Main {
     private static TButton h;
     private static TButton lp;
     private static TButton np;
+    private static TButtonToggle pa;
     private static TButton hi;
     private static TButton s;
     private static TButton ab;
@@ -17,7 +18,7 @@ class Main {
     private static CardLayout cl;
     
     private static JPanel shelf;
-    private static RealHtmlPanel read;
+    private static HtmlPanel read;
     
     private static void setLaf(String lafClass) {
         try {
@@ -59,6 +60,9 @@ class Main {
         np = new TButton("Next Page", Res.getAsImageIcon("res/nextpage.png"));
         tb.add(np);
         
+        pa = new TButtonToggle("Two Pages", "One Page", Res.getAsImageIcon("res/twopages.png"), Res.getAsImageIcon("res/onepage.png"));
+        tb.add(pa);
+        
         hi = new TButton("History", Res.getAsImageIcon("res/history.png"));
         tb.add(hi);
         
@@ -75,19 +79,23 @@ class Main {
         f.add(card, BorderLayout.CENTER);
         
         shelf = new JPanel();
-        card.add("Shelf", shelf);
+        card.add("Shelf", new CleanScrollPane(shelf));
         
-        read = new RealHtmlPanel();
+        read = new HtmlPanel();
         
         card.add("Read", read);
         
-        cl.last(card);
+        cl.first(card);
     }
     private static void addEvents() {
         h.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cl.first(card);
             }
+        });
+        pa.setOnToggled((t) -> {
+            // false = two pages
+            
         });
         s.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

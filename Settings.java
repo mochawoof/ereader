@@ -14,7 +14,7 @@ class Settings {
     // Settings with a . preceding their names will not be user-editable
     // Underscores will be shown to the user as spaces
     public static HashMap<String, String[]> defaults = new HashMap<String, String[]>() {{
-        put("a", new String[] {"b", "c", "d"});
+        
     }};
     
     private static void applyDefaults() {
