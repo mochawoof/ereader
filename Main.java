@@ -34,8 +34,17 @@ class Main {
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);        
         
-        f = new JFrame("Bookshelf");
-        f.setSize(400, 600);
+        JFrame mf = new JFrame("Bookshelf");
+        mf.setSize(400, 600);
+        
+        // Set old frame properties when restarting
+        if (f != null) {
+            mf.setLocation(f.getLocation());
+            mf.setSize(f.getSize());
+            f.dispose();
+        }
+        
+        f = mf;
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setLayout(new BorderLayout());
         f.setIconImage(Res.getAsImage("res/icon.png"));
@@ -101,7 +110,6 @@ class Main {
             public void actionPerformed(ActionEvent e) {
                 int s = Settings.showEditWindow(f);
                 if (s == Settings.OK || s == Settings.RESET) {
-                    f.dispose();
                     main(new String[0]);
                 }
             }
