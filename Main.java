@@ -18,7 +18,9 @@ class Main {
     private static CardLayout cl;
     
     private static JPanel shelf;
-    private static HtmlPanel read;
+    private static JPanel read;
+    private static HtmlPanel leftpage;
+    private static HtmlPanel rightpage;
     
     private static void setLaf(String lafClass) {
         try {
@@ -90,11 +92,28 @@ class Main {
         shelf = new JPanel();
         card.add("Shelf", new CleanScrollPane(shelf));
         
-        read = new HtmlPanel();
+        read = new JPanel();
+        read.setLayout(new GridLayout(1, 0));
+
+        leftpage = new HtmlPanel();
+        leftpage.loadUrl("http://example.com");
+        read.add(leftpage);
+        rightpage = new HtmlPanel();
+        rightpage.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
+        rightpage.loadUrl("http://example.com");
         
         card.add("Read", read);
         
-        cl.first(card);
+        cl.last(card);
+    }
+    private static void updateReadPages() {
+        if (pa.isToggled()) {
+            read.remove(rightpage);
+        } else {
+            read.add(rightpage);
+        }
+        read.revalidate();
+        read.repaint();
     }
     private static void addEvents() {
         h.addActionListener(new ActionListener() {
@@ -102,9 +121,23 @@ class Main {
                 cl.first(card);
             }
         });
+        // Set stored pa toggle
+        switch (Settings.get(".Pa")) {
+            case "1":
+                pa.toggle(true);
+                break;
+            default:
+                pa.toggle(false);
+                break;
+        }
+        updateReadPages(); // Update them read pages ahead of time
         pa.setOnToggled((t) -> {
-            // false = two pages
-            
+            if (!t) {
+                Settings.set(".Pa", "0");
+            } else {
+                Settings.set(".Pa", "1");
+            }
+            updateReadPages();
         });
         s.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -10,11 +10,17 @@ import java.util.Enumeration;
 class Settings {
     public static Properties props;
     private static String filename = ".settings";
+    private static final boolean DEBUG = false;
     
-    // Settings with a . preceding their names will not be user-editable
+    // Consts for showEditWindow
+    public static final int OK = 0;
+    public static final int CANCEL = 1;
+    public static final int RESET = 2;
+    
+    // Settings with a . preceding their names will not be shown to the user
     // Underscores will be shown to the user as spaces
     public static HashMap<String, String[]> defaults = new HashMap<String, String[]>() {{
-        
+        put(".Pa", new String[] {"0"});
     }};
     
     private static void applyDefaults() {
@@ -61,10 +67,6 @@ class Settings {
         save();
     }
     
-    public static final int OK = 0;
-    public static final int CANCEL = 1;
-    public static final int RESET = 2;
-    
     public static int showEditWindow(JFrame parent) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(0, 2));
@@ -79,7 +81,7 @@ class Settings {
             String[] defaultVals = defaults.get(key);
             
             // Make sure default values exist
-            if (defaultVals != null) {
+            if (defaultVals != null && (!key.startsWith(".") || DEBUG)) {
                 panel.add(new JLabel(key.replace("_", " ")));
                             
                 JComboBox comboBox = new JComboBox(defaultVals);
