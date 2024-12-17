@@ -19,8 +19,7 @@ class Main {
     
     private static JPanel shelf;
     private static JPanel read;
-    private static HtmlPanel leftpage;
-    private static HtmlPanel rightpage;
+    private static HtmlPanel page;
     
     private static void setLaf(String lafClass) {
         try {
@@ -93,27 +92,38 @@ class Main {
         card.add("Shelf", new CleanScrollPane(shelf));
         
         read = new JPanel();
-        read.setLayout(new GridLayout(1, 0));
+        read.setLayout(null);
 
-        leftpage = new HtmlPanel();
-        leftpage.loadUrl("http://example.com");
-        read.add(leftpage);
-        rightpage = new HtmlPanel();
-        rightpage.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-        rightpage.loadUrl("http://example.com");
+        page = new HtmlPanel();
+        page.setPreferredSize(new Dimension(850, 1100));
+        page.loadUrl("http://example.com");
+        read.add(page);
         
         card.add("Read", read);
         
         cl.last(card);
     }
-    private static void updateReadPages() {
-        if (pa.isToggled()) {
-            read.remove(rightpage);
+    private static void updatePageBounds() {
+        Dimension pref = page.getPreferredSize();
+        double aspecth = pref.getWidth() / pref.getHeight();
+        double aspectw = pref.getHeight() / pref.getWidth();
+        int woh = read.getHeight() * aspecth;
+        int how = read.getWidth() * aspectw;
+
+        int bdx = 0;
+        int bdy = 0;
+        int bdw = read.getWidth();
+        int bdh = read.getHeight();
+        if (woh > read.getWidth()) {
+            // set how
+            bdh = how;
+            bdy = (read.getHeight() / 2) - (bdh / 2);
         } else {
-            read.add(rightpage);
+            // set woh
+            bdw = woh;
+            bdx = (read.getWidth() / 2) - (bdw / 2);
         }
-        read.revalidate();
-        read.repaint();
+        page.setBounds(bdx, bdy, bdw, bdh);
     }
     private static void addEvents() {
         h.addActionListener(new ActionListener() {
@@ -151,6 +161,17 @@ class Main {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(f, "Bookshelf Version 1.0 Prerelease.\n\nCopyright (c) SchizoSoft 2024. All rights reserved.", "About Bookshelf", JOptionPane.PLAIN_MESSAGE, new ImageIcon(f.getIconImage()));
             }
+        });
+
+        read.addComponentListener(new ComponentAdapter() {
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+
+            public void componentResized(ComponentEvent e) {
+                updatePageBounds();
+            }
+
+            public void componentShown(ComponentEvent e) {}
         });
     }
 }
